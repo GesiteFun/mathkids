@@ -1,419 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Genius Challenge</title>
-    <style>
-        /* Modern Gradient Background */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Math Genius Challenge</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
 
-        /* Glassmorphism Container */
-        .game-container {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+    .game-container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-        /* Neumorphic Stats */
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
 
-        .stat-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 15px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
-                        -5px -5px 15px rgba(255, 255, 255, 0.05);
-            flex: 1;
-            margin: 0 0.5rem;
-        }
+    .stat-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 15px;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+        -5px -5px 15px rgba(255, 255, 255, 0.05);
+      flex: 1;
+      margin: 0 0.5rem;
+    }
 
-        .stat-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-bottom: 0.5rem;
-        }
+    .stat-label {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-        /* Problem Display */
-        .problem {
-            font-size: 2.5rem;
-            margin: 2rem 0;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1.5rem;
-            border-radius: 15px;
-            font-weight: 700;
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .problem {
+      font-size: 2.5rem;
+      margin: 2rem 0;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-weight: 700;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        /* Options Grid */
-        .options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-        .option {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 15px;
-            padding: 1.2rem;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-        }
+    .option {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 15px;
+      padding: 1.2rem;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    }
 
-        .option:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
+    .option:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
 
-        .option.correct {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            animation: pulse 0.5s;
-        }
+    .option.correct {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      animation: pulse 0.5s;
+    }
 
-        .option.wrong {
-            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
-        }
+    .option.wrong {
+      background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+    }
 
-        /* Controls */
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
 
-        button {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 50px;
-            padding: 0.8rem 1.8rem;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    button {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.8rem;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
+    button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
 
-        button:active {
-            transform: translateY(1px);
-        }
+    button:active {
+      transform: translateY(1px);
+    }
 
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
 
-        /* Responsive */
-        @media (max-width: 500px) {
-            .game-container {
-                padding: 1.5rem;
-            }
-            
-            .problem {
-                font-size: 2rem;
-                padding: 1rem;
-            }
-            
-            .options {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    @media (max-width: 500px) {
+      .game-container {
+        padding: 1.5rem;
+      }
+
+      .problem {
+        font-size: 2rem;
+        padding: 1rem;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Math Genius Challenge</h1>
-        
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-label">Score</div>
-                <div class="stat-value" id="score">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Time</div>
-                <div class="stat-value" id="time">60</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">High Score</div>
-                <div class="stat-value" id="high-score">0</div>
-            </div>
-        </div>
-        
-        <div class="problem" id="problem">
-            5 + 7 = ?
-        </div>
-        
-        <div class="options" id="options">
-            <button class="option">12</button>
-            <button class="option">13</button>
-            <button class="option">11</button>
-            <button class="option">14</button>
-        </div>
-        
-        <div class="controls">
-            <button id="start-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 3l14 9-14 9V3z"></path>
-                </svg>
-                Start Game
-            </button>
-            <button id="reset-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                    <path d="M3 3v5h5"></path>
-                </svg>
-                Reset
-            </button>
-        </div>
+  <div class="game-container">
+    <h1>Math Genius Challenge</h1>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Time</div>
+        <div class="stat-value" id="time">60</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">High Score</div>
+        <div class="stat-value" id="high-score">0</div>
+      </div>
     </div>
 
-    <script>
-        // Game Elements
-        const problemElement = document.getElementById('problem');
-        const optionsContainer = document.getElementById('options');
-        const scoreElement = document.getElementById('score');
-        const timeElement = document.getElementById('time');
-        const highScoreElement = document.getElementById('high-score');
-        const startBtn = document.getElementById('start-btn');
-        const resetBtn = document.getElementById('reset-btn');
+    <div class="problem" id="problem">Ready to play?</div>
 
-        // Game Variables
-        let score = 0;
-        let timeLeft = 60;
-        let highScore = localStorage.getItem('mathHighScore') || 0;
-        let gameInterval;
-        let timer;
-        let currentProblem = {};
-        let gameActive = false;
+    <div class="options" id="options"></div>
 
-        // Operations
-        const operations = [
-            { symbol: '+', method: (a, b) => a + b },
-            { symbol: '-', method: (a, b) => a - b },
-            { symbol: '×', method: (a, b) => a * b },
-            { symbol: '÷', method: (a, b) => a / b }
-        ];
+    <div class="controls">
+      <button id="start-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 3l14 9-14 9V3z"></path>
+        </svg>
+        Start Game
+      </button>
+      <button id="reset-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+        </svg>
+        Reset
+      </button>
+    </div>
 
-        // Initialize
+    <p style="margin-top: 2rem; font-size: 0.8rem; opacity: 0.7;">© 2025 fawwazdzaky | Math Genius</p>
+  </div>
+
+  <script>
+    const problemElement = document.getElementById('problem');
+    const optionsContainer = document.getElementById('options');
+    const scoreElement = document.getElementById('score');
+    const timeElement = document.getElementById('time');
+    const highScoreElement = document.getElementById('high-score');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let score = 0;
+    let timeLeft = 60;
+    let highScore = localStorage.getItem('mathHighScore') || 0;
+    let timer;
+    let currentProblem = {};
+    let gameActive = false;
+
+    const operations = [
+      { symbol: '+', method: (a, b) => a + b },
+      { symbol: '-', method: (a, b) => a - b },
+      { symbol: '×', method: (a, b) => a * b },
+      { symbol: '÷', method: (a, b) => a / b }
+    ];
+
+    highScoreElement.textContent = highScore;
+
+    function generateProblem() {
+      const operation = operations[Math.floor(Math.random() * operations.length)];
+      let a, b, answer;
+
+      switch (operation.symbol) {
+        case '+':
+          a = Math.floor(Math.random() * 100) + 20;
+          b = Math.floor(Math.random() * 100) + 20;
+          break;
+        case '-':
+          a = Math.floor(Math.random() * 150) + 50;
+          b = Math.floor(Math.random() * 100) + 20;
+          break;
+        case '×':
+          a = Math.floor(Math.random() * 20) + 10;
+          b = Math.floor(Math.random() * 15) + 5;
+          break;
+        case '÷':
+          b = Math.floor(Math.random() * 15) + 2;
+          a = b * (Math.floor(Math.random() * 20) + 5);
+          break;
+      }
+
+      answer = operation.method(a, b);
+      const roundedAnswer = operation.symbol === '÷' ? parseFloat(answer.toFixed(2)) : answer;
+
+      currentProblem = {
+        a: a,
+        b: b,
+        operation: operation.symbol,
+        answer: roundedAnswer,
+        options: generateOptions(roundedAnswer)
+      };
+
+      problemElement.textContent = `${a} ${operation.symbol} ${b} = ?`;
+      renderOptions();
+    }
+
+    function generateOptions(correctAnswer) {
+      const options = [correctAnswer];
+      const isDecimal = correctAnswer % 1 !== 0;
+
+      while (options.length < 4) {
+        let offset = isDecimal
+          ? (Math.random() * 5).toFixed(2)
+          : Math.floor(Math.random() * 20) + 1;
+
+        offset = Number(offset);
+        const option = Math.random() > 0.5
+          ? correctAnswer + offset
+          : correctAnswer - offset;
+
+        const roundedOption = isDecimal ? parseFloat(option.toFixed(2)) : Math.round(option);
+
+        if (!options.includes(roundedOption)) {
+          options.push(roundedOption);
+        }
+      }
+
+      return shuffleArray(options);
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function renderOptions() {
+      optionsContainer.innerHTML = '';
+      currentProblem.options.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'option';
+        button.textContent = option;
+        button.addEventListener('click', () => checkAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedAnswer) {
+      if (!gameActive) return;
+
+      const options = document.querySelectorAll('.option');
+
+      options.forEach(option => {
+        option.disabled = true;
+
+        if (parseFloat(option.textContent) === currentProblem.answer) {
+          option.classList.add('correct');
+        } else if (option.textContent === selectedAnswer.toString()) {
+          option.classList.add('wrong');
+        }
+      });
+
+      if (selectedAnswer === currentProblem.answer) {
+        score++;
+        scoreElement.textContent = score;
+        timeLeft = Math.min(60, timeLeft + 3);
+        timeElement.textContent = timeLeft;
+      } else {
+        score = Math.max(0, score - 1);
+        scoreElement.textContent = score;
+        timeLeft = Math.max(5, timeLeft - 5);
+        timeElement.textContent = timeLeft;
+      }
+
+      setTimeout(() => {
+        generateProblem();
+      }, 1000);
+    }
+
+    function startGame() {
+      if (gameActive) return;
+
+      gameActive = true;
+      score = 0;
+      timeLeft = 60;
+      scoreElement.textContent = score;
+      timeElement.textContent = timeLeft;
+      startBtn.disabled = true;
+
+      generateProblem();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timeElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      gameActive = false;
+      startBtn.disabled = false;
+
+      if (score > highScore) {
+        highScore = score;
         highScoreElement.textContent = highScore;
+        localStorage.setItem('mathHighScore', highScore);
+      }
 
-        // Generate Math Problem
-        function generateProblem() {
-            const operation = operations[Math.floor(Math.random() * operations.length)];
-            let a, b, answer;
-            
-            // Ensure problems are appropriate difficulty
-            switch(operation.symbol) {
-                case '+':
-                    a = Math.floor(Math.random() * 20) + 1;
-                    b = Math.floor(Math.random() * 20) + 1;
-                    break;
-                case '-':
-                    a = Math.floor(Math.random() * 20) + 10;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    break;
-                case '×':
-                    a = Math.floor(Math.random() * 10) + 1;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    break;
-                case '÷':
-                    b = Math.floor(Math.random() * 8) + 2;
-                    a = b * (Math.floor(Math.random() * 8) + 2);
-                    break;
-            }
-            
-            answer = operation.method(a, b);
-            
-            currentProblem = {
-                a: a,
-                b: b,
-                operation: operation.symbol,
-                answer: answer,
-                options: generateOptions(answer)
-            };
-            
-            problemElement.textContent = `${a} ${operation.symbol} ${b} = ?`;
-            renderOptions();
-        }
+      problemElement.textContent = `${currentProblem.a} ${currentProblem.operation} ${currentProblem.b} = ${currentProblem.answer}`;
+    }
 
-        // Generate Answer Options
-        function generateOptions(correctAnswer) {
-            const options = [correctAnswer];
-            
-            while (options.length < 4) {
-                const randomOffset = Math.floor(Math.random() * 5) + 1;
-                const option = Math.random() > 0.5 
-                    ? correctAnswer + randomOffset
-                    : correctAnswer - randomOffset;
-                
-                if (option !== correctAnswer && !options.includes(option)) {
-                    options.push(option);
-                }
-            }
-            
-            return shuffleArray(options);
-        }
+    function resetGame() {
+      clearInterval(timer);
+      gameActive = false;
+      score = 0;
+      timeLeft = 60;
+      scoreElement.textContent = score;
+      timeElement.textContent = timeLeft;
+      startBtn.disabled = false;
+      problemElement.textContent = "Ready to play?";
+      optionsContainer.innerHTML = '';
+    }
 
-        // Shuffle Array
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        // Render Options
-        function renderOptions() {
-            optionsContainer.innerHTML = '';
-            
-            currentProblem.options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'option';
-                button.textContent = option;
-                button.addEventListener('click', () => checkAnswer(option));
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        // Check Answer
-        function checkAnswer(selectedAnswer) {
-            if (!gameActive) return;
-            
-            const options = document.querySelectorAll('.option');
-            
-            options.forEach(option => {
-                option.disabled = true;
-                
-                if (parseInt(option.textContent) === currentProblem.answer) {
-                    option.classList.add('correct');
-                } else if (option.textContent === selectedAnswer.toString()) {
-                    option.classList.add('wrong');
-                }
-            });
-            
-            if (selectedAnswer === currentProblem.answer) {
-                score++;
-                scoreElement.textContent = score;
-                
-                // Increase difficulty
-                timeLeft = Math.min(60, timeLeft + 3);
-                timeElement.textContent = timeLeft;
-            } else {
-                score = Math.max(0, score - 1);
-                scoreElement.textContent = score;
-                
-                // Decrease time penalty
-                timeLeft = Math.max(5, timeLeft - 5);
-                timeElement.textContent = timeLeft;
-            }
-            
-            setTimeout(() => {
-                generateProblem();
-            }, 1000);
-        }
-
-        // Start Game
-        function startGame() {
-            if (gameActive) return;
-            
-            gameActive = true;
-            score = 0;
-            timeLeft = 60;
-            scoreElement.textContent = score;
-            timeElement.textContent = timeLeft;
-            startBtn.disabled = true;
-            
-            generateProblem();
-            
-            timer = setInterval(() => {
-                timeLeft--;
-                timeElement.textContent = timeLeft;
-                
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        // End Game
-        function endGame() {
-            clearInterval(timer);
-            gameActive = false;
-            startBtn.disabled = false;
-            
-            if (score > highScore) {
-                highScore = score;
-                highScoreElement.textContent = highScore;
-                localStorage.setItem('mathHighScore', highScore);
-            }
-            
-            // Show correct answer
-            problemElement.textContent = `${currentProblem.a} ${currentProblem.operation} ${currentProblem.b} = ${currentProblem.answer}`;
-        }
-
-        // Reset Game
-        function resetGame() {
-            clearInterval(timer);
-            gameActive = false;
-            score = 0;
-            timeLeft = 60;
-            scoreElement.textContent = score;
-            timeElement.textContent = timeLeft;
-            startBtn.disabled = false;
-            problemElement.textContent = "Ready to play?";
-            optionsContainer.innerHTML = '';
-            
-            // Clear options
-            while (optionsContainer.firstChild) {
-                optionsContainer.removeChild(optionsContainer.firstChild);
-            }
-        }
-
-        // Event Listeners
-        startBtn.addEventListener('click', startGame);
-        resetBtn.addEventListener('click', resetGame);
-    </script>
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+  </script>
 </body>
 </html>
