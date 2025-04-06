@@ -28,7 +28,6 @@
             max-width: 500px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
         }
 
         /* Neumorphic Stats */
@@ -61,7 +60,7 @@
 
         /* Problem Display */
         .problem {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin: 2rem 0;
             background: rgba(0, 0, 0, 0.2);
             padding: 1.5rem;
@@ -138,25 +137,6 @@
             transform: translateY(1px);
         }
 
-        /* Difficulty Indicator */
-        .difficulty {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        /* Copyright */
-        .copyright {
-            margin-top: 1.5rem;
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
         /* Animations */
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -171,7 +151,7 @@
             }
 
             .problem {
-                font-size: 1.5rem;
+                font-size: 2rem;
                 padding: 1rem;
             }
 
@@ -183,7 +163,6 @@
 </head>
 <body>
     <div class="game-container">
-        <div class="difficulty" id="difficulty">Level: 1</div>
         <h1>Math Genius Challenge</h1>
 
         <div class="stats">
@@ -202,11 +181,14 @@
         </div>
 
         <div class="problem" id="problem">
-            Ready to play?
+            5 + 7 = ?
         </div>
 
         <div class="options" id="options">
-            <!-- Options will be generated dynamically -->
+            <button class="option">12</button>
+            <button class="option">13</button>
+            <button class="option">11</button>
+            <button class="option">14</button>
         </div>
 
         <div class="controls">
@@ -224,8 +206,6 @@
                 Reset
             </button>
         </div>
-
-        <div class="copyright">© 2025 fawwazdzaky | Math Genius</div>
     </div>
 
     <script>
@@ -237,219 +217,81 @@
         const highScoreElement = document.getElementById('high-score');
         const startBtn = document.getElementById('start-btn');
         const resetBtn = document.getElementById('reset-btn');
-        const difficultyElement = document.getElementById('difficulty');
 
         // Game Variables
         let score = 0;
         let timeLeft = 60;
         let highScore = localStorage.getItem('mathHighScore') || 0;
+        let gameInterval;
         let timer;
         let currentProblem = {};
         let gameActive = false;
-        let difficultyLevel = 1;
-        let correctAnswersInRow = 0;
 
-        // Operations - Enhanced with more complex math problems
+        // Operations
         const operations = [
-            { symbol: '+', method: (a, b) => a + b, name: 'Addition' },
-            { symbol: '-', method: (a, b) => a - b, name: 'Subtraction' },
-            { symbol: '×', method: (a, b) => a * b, name: 'Multiplication' },
-            { symbol: '÷', method: (a, b) => a / b, name: 'Division' },
-            { symbol: '√', method: (a) => Math.sqrt(a), name: 'Square Root', unary: true },
-            { symbol: '²', method: (a) => a * a, name: 'Square', unary: true },
-            { symbol: '³', method: (a) => a * a * a, name: 'Cube', unary: true },
-            { symbol: '%', method: (a, b) => a % b, name: 'Modulo' },
-            { symbol: '^', method: (a, b) => Math.pow(a, b), name: 'Exponent' }
+            { symbol: '+', method: (a, b) => a + b },
+            { symbol: '-', method: (a, b) => a - b },
+            { symbol: '×', method: (a, b) => a * b },
+            { symbol: '÷', method: (a, b) => a / b }
         ];
 
         // Initialize
         highScoreElement.textContent = highScore;
-        updateDifficultyDisplay();
 
-        // Generate Math Problem with increasing difficulty
+        // Generate Math Problem
         function generateProblem() {
-            // Increase difficulty based on score
-            difficultyLevel = Math.min(10, Math.floor(score / 5) + 1);
-            
-            // 30% chance to get a unary operation (like square root or square)
-            const useUnary = Math.random() < 0.3 && difficultyLevel > 3;
-            
-            let operation;
-            if (useUnary) {
-                // Filter unary operations
-                const unaryOps = operations.filter(op => op.unary);
-                operation = unaryOps[Math.floor(Math.random() * unaryOps.length)];
-            } else {
-                // Filter binary operations (excluding unary)
-                const binaryOps = operations.filter(op => !op.unary);
-                operation = binaryOps[Math.floor(Math.random() * binaryOps.length)];
-            }
-            
-            let a, b, answer, problemText;
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            let a, b, answer;
 
-            if (operation.unary) {
-                // Unary operations (like square root, square)
-                a = generateNumber(difficultyLevel, operation.symbol);
-                answer = parseFloat(operation.method(a).toFixed(2));
-                problemText = `${operation.symbol}${a} = ?`;
-            } else {
-                // Binary operations
-                a = generateNumber(difficultyLevel, operation.symbol);
-                b = generateNumber(difficultyLevel, operation.symbol);
-                
-                // For division, ensure clean results and b isn't zero
-                if (operation.symbol === '÷') {
-                    b = Math.max(1, b);
-                    a = a * b; // Ensure clean division
-                }
-                
-                // For modulo, ensure positive results
-                if (operation.symbol === '%') {
-                    a = Math.abs(a);
-                    b = Math.max(1, Math.abs(b));
-                }
-                
-                answer = parseFloat(operation.method(a, b).toFixed(2));
-                problemText = `${a} ${operation.symbol} ${b} = ?`;
+            // Ensure problems are appropriate difficulty
+            switch(operation.symbol) {
+                case '+':
+                    a = Math.floor(Math.random() * 20) + 1;
+                    b = Math.floor(Math.random() * 20) + 1;
+                    break;
+                case '-':
+                    a = Math.floor(Math.random() * 20) + 10;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    break;
+                case '×':
+                    a = Math.floor(Math.random() * 10) + 1;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    break;
+                case '÷':
+                    b = Math.floor(Math.random() * 8) + 2;
+                    a = b * (Math.floor(Math.random() * 8) + 2);
+                    break;
             }
+
+            answer = operation.method(a, b);
 
             currentProblem = {
                 a: a,
                 b: b,
                 operation: operation.symbol,
                 answer: answer,
-                options: generateOptions(answer, operation),
-                text: problemText
+                options: generateOptions(answer)
             };
 
-            problemElement.textContent = problemText;
+            problemElement.textContent = `${a} ${operation.symbol} ${b} = ?`;
             renderOptions();
-            updateDifficultyDisplay();
         }
 
-        // Generate number based on difficulty level
-        function generateNumber(level, operation) {
-            let max, min = 1;
-            
-            switch(operation) {
-                case '+':
-                    max = level * 10 + 10;
-                    break;
-                case '-':
-                    max = level * 15 + 15;
-                    min = level * 5;
-                    break;
-                case '×':
-                    max = level * 5 + 5;
-                    break;
-                case '÷':
-                    max = level * 3 + 3;
-                    break;
-                case '√':
-                    max = level * 50 + 50;
-                    // Ensure perfect squares for cleaner answers
-                    return Math.pow(Math.floor(Math.random() * (level + 3)) + 2, 2);
-                case '²':
-                    max = level * 2 + 5;
-                    break;
-                case '³':
-                    max = level + 5;
-                    break;
-                case '%':
-                    max = level * 20 + 20;
-                    break;
-                case '^':
-                    max = level + 3;
-                    // Keep exponents small to prevent huge numbers
-                    return Math.floor(Math.random() * max) + 2;
-                default:
-                    max = level * 10 + 10;
-            }
-            
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        // Generate Answer Options with more sophisticated distractors
-        function generateOptions(correctAnswer, operation) {
-            correctAnswer = parseFloat(correctAnswer);
+        // Generate Answer Options
+        function generateOptions(correctAnswer) {
             const options = [correctAnswer];
-            const answerType = Number.isInteger(correctAnswer) ? 'integer' : 'decimal';
-            
+
             while (options.length < 4) {
-                let option;
-                const randomOffset = (Math.random() * 0.2 + 0.1) * correctAnswer;
-                
-                // Different strategies for different operations
-                if (operation.symbol === '√') {
-                    // For square roots, common mistakes are adding/subtracting 1 or squaring
-                    option = Math.random() > 0.5 
-                        ? correctAnswer + (Math.floor(Math.random() * 3) + 1)
-                        : correctAnswer - (Math.floor(Math.random() * 3) + 1);
-                } 
-                else if (operation.symbol === '²') {
-                    // For squares, common mistakes are multiplying by 2 or adding the number
-                    option = Math.random() > 0.5 
-                        ? correctAnswer + (Math.random() > 0.5 ? operation.a : operation.a * 2)
-                        : correctAnswer - (Math.random() > 0.5 ? operation.a : operation.a / 2);
-                }
-                else if (operation.symbol === '÷') {
-                    // For division, common mistakes are multiplying or adding denominators
-                    option = Math.random() > 0.5 
-                        ? correctAnswer + (Math.random() > 0.5 ? operation.b : operation.a / (operation.b + 1))
-                        : correctAnswer - (Math.random() > 0.5 ? operation.b : operation.a / (operation.b - 1));
-                }
-                else {
-                    // General case - more sophisticated distractors
-                    const strategy = Math.floor(Math.random() * 4);
-                    switch(strategy) {
-                        case 0: // Add/subtract a fraction of the answer
-                            option = correctAnswer * (1 + (Math.random() > 0.5 ? 0.1 : -0.1) * (Math.random() + 0.5);
-                            break;
-                        case 1: // Swap digits or decimal places
-                            if (answerType === 'integer' && correctAnswer > 9) {
-                                const digits = String(correctAnswer).split('');
-                                // Swap two random digits
-                                const i = Math.floor(Math.random() * digits.length);
-                                let j;
-                                do {
-                                    j = Math.floor(Math.random() * digits.length);
-                                } while (j === i);
-                                [digits[i], digits[j]] = [digits[j], digits[i]];
-                                option = parseInt(digits.join(''));
-                            } else {
-                                option = correctAnswer + (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 5) + 1);
-                            }
-                            break;
-                        case 2: // Common arithmetic errors
-                            if (operation.symbol === '×') {
-                                option = correctAnswer + (Math.random() > 0.5 ? currentProblem.a : currentProblem.b);
-                            } else {
-                                option = correctAnswer + (Math.random() > 0.5 ? 5 : -5);
-                            }
-                            break;
-                        case 3: // Off by factor
-                            option = correctAnswer * (Math.random() > 0.5 ? 1.5 : 0.5);
-                            break;
-                    }
-                }
-                
-                // Ensure option is positive and not NaN
-                option = Math.abs(parseFloat(option.toFixed(2)));
-                if (isNaN(option)) continue;
-                
-                // For decimal answers, format the distractors similarly
-                if (!Number.isInteger(correctAnswer)) {
-                    option = parseFloat(option.toFixed(2));
-                } else {
-                    option = Math.round(option);
-                }
-                
-                // Ensure the option is unique and not the correct answer
-                if (option !== correctAnswer && !options.some(opt => Math.abs(opt - option) < 0.01)) {
+                const randomOffset = Math.floor(Math.random() * 5) + 1;
+                const option = Math.random() > 0.5 
+                    ? correctAnswer + randomOffset
+                    : correctAnswer - randomOffset;
+
+                if (option !== correctAnswer && !options.includes(option)) {
                     options.push(option);
                 }
             }
-            
+
             return shuffleArray(options);
         }
 
@@ -469,7 +311,7 @@
             currentProblem.options.forEach(option => {
                 const button = document.createElement('button');
                 button.className = 'option';
-                button.textContent = Number.isInteger(option) ? option : option.toFixed(2);
+                button.textContent = option;
                 button.addEventListener('click', () => checkAnswer(option));
                 optionsContainer.appendChild(button);
             });
@@ -483,64 +325,33 @@
 
             options.forEach(option => {
                 option.disabled = true;
-                
-                const optionValue = parseFloat(option.textContent);
-                const correctValue = parseFloat(currentProblem.answer);
-                
-                if (Math.abs(optionValue - correctValue) < 0.01) {
+
+                if (parseInt(option.textContent) === currentProblem.answer) {
                     option.classList.add('correct');
-                } else if (Math.abs(optionValue - selectedAnswer) < 0.01) {
+                } else if (option.textContent === selectedAnswer.toString()) {
                     option.classList.add('wrong');
                 }
             });
 
-            const isCorrect = Math.abs(selectedAnswer - currentProblem.answer) < 0.01;
-            
-            if (isCorrect) {
-                score += difficultyLevel; // More points for harder questions
-                correctAnswersInRow++;
+            if (selectedAnswer === currentProblem.answer) {
+                score++;
                 scoreElement.textContent = score;
 
-                // Time bonus for correct answers
-                const timeBonus = Math.min(10, Math.floor(difficultyLevel / 2) + 1);
-                timeLeft = Math.min(60, timeLeft + timeBonus);
+                // Increase difficulty
+                timeLeft = Math.min(60, timeLeft + 3);
                 timeElement.textContent = timeLeft;
-                
-                // Every 3 correct answers in a row increases difficulty faster
-                if (correctAnswersInRow >= 3) {
-                    difficultyLevel = Math.min(10, difficultyLevel + 1);
-                    correctAnswersInRow = 0;
-                }
             } else {
-                score = Math.max(0, score - Math.floor(difficultyLevel / 2));
-                correctAnswersInRow = 0;
+                score = Math.max(0, score - 1);
                 scoreElement.textContent = score;
 
-                // Time penalty for wrong answers
-                timeLeft = Math.max(5, timeLeft - (5 + difficultyLevel));
+                // Decrease time penalty
+                timeLeft = Math.max(5, timeLeft - 5);
                 timeElement.textContent = timeLeft;
-                
-                // Decrease difficulty slightly on wrong answer
-                difficultyLevel = Math.max(1, difficultyLevel - 1);
             }
 
             setTimeout(() => {
                 generateProblem();
             }, 1000);
-        }
-
-        // Update difficulty display
-        function updateDifficultyDisplay() {
-            const difficultyNames = [
-                "Beginner", "Easy", "Medium", "Hard", "Advanced",
-                "Expert", "Master", "Genius", "Legendary", "Impossible"
-            ];
-            const name = difficultyNames[Math.min(difficultyLevel - 1, difficultyNames.length - 1)];
-            difficultyElement.textContent = `Level ${difficultyLevel}: ${name}`;
-            
-            // Change color based on difficulty
-            const hue = 120 - (difficultyLevel * 10); // Green to red
-            difficultyElement.style.background = `hsla(${hue}, 70%, 40%, 0.7)`;
         }
 
         // Start Game
@@ -550,8 +361,6 @@
             gameActive = true;
             score = 0;
             timeLeft = 60;
-            difficultyLevel = 1;
-            correctAnswersInRow = 0;
             scoreElement.textContent = score;
             timeElement.textContent = timeLeft;
             startBtn.disabled = true;
@@ -581,15 +390,7 @@
             }
 
             // Show correct answer
-            if (currentProblem.operation && currentProblem.a !== undefined) {
-                if (currentProblem.unary) {
-                    problemElement.textContent = `${currentProblem.operation}${currentProblem.a} = ${currentProblem.answer}`;
-                } else {
-                    problemElement.textContent = `${currentProblem.a} ${currentProblem.operation} ${currentProblem.b} = ${currentProblem.answer}`;
-                }
-            } else {
-                problemElement.textContent = `Game Over! Final Score: ${score}`;
-            }
+            problemElement.textContent = `${currentProblem.a} ${currentProblem.operation} ${currentProblem.b} = ${currentProblem.answer}`;
         }
 
         // Reset Game
@@ -598,14 +399,16 @@
             gameActive = false;
             score = 0;
             timeLeft = 60;
-            difficultyLevel = 1;
-            correctAnswersInRow = 0;
             scoreElement.textContent = score;
             timeElement.textContent = timeLeft;
             startBtn.disabled = false;
             problemElement.textContent = "Ready to play?";
             optionsContainer.innerHTML = '';
-            updateDifficultyDisplay();
+
+            // Clear options
+            while (optionsContainer.firstChild) {
+                optionsContainer.removeChild(optionsContainer.firstChild);
+            }
         }
 
         // Event Listeners
