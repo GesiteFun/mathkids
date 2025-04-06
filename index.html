@@ -1,569 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Genius Challenge</title>
-    <style>
-        /* Modern Gradient Background */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Math Genius Challenge</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
 
-        /* Glassmorphism Container */
-        .game-container {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+    .game-container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-        /* Header */
-        .game-header {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
 
-        .copyright {
-            position: absolute;
-            bottom: -20px;
-            right: 0;
-            font-size: 0.7rem;
-            opacity: 0.7;
-        }
+    .stat-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 15px;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+        -5px -5px 15px rgba(255, 255, 255, 0.05);
+      flex: 1;
+      margin: 0 0.5rem;
+    }
 
-        /* Neumorphic Stats */
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
+    .stat-label {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
 
-        .stat-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 15px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.05);
-            flex: 1;
-            margin: 0 0.5rem;
-        }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-        .stat-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-bottom: 0.5rem;
-        }
+    .problem {
+      font-size: 2.5rem;
+      margin: 2rem 0;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-weight: 700;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-        /* Problem Display */
-        .problem {
-            font-size: 2.5rem;
-            margin: 2rem 0;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1.5rem;
-            border-radius: 15px;
-            font-weight: 700;
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .option {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 15px;
+      padding: 1.2rem;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Options Grid */
-        .options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+    .option:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
 
-        .option {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 15px;
-            padding: 1.2rem;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-        }
+    .option.correct {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      animation: pulse 0.5s;
+    }
 
-        .option:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
+    .option.wrong {
+      background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+    }
 
-        .option.correct {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            animation: pulse 0.5s;
-        }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
 
-        .option.wrong {
-            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
-        }
+    button {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.8rem;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        /* Controls */
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
+    button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
 
-        button {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 50px;
-            padding: 0.8rem 1.8rem;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    button:active {
+      transform: translateY(1px);
+    }
 
-        button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
 
-        button:active {
-            transform: translateY(1px);
-        }
+    @media (max-width: 500px) {
+      .game-container {
+        padding: 1.5rem;
+      }
 
-        /* Difficulty Indicator */
-        .difficulty {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
+      .problem {
+        font-size: 2rem;
+        padding: 1rem;
+      }
 
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* Responsive */
-        @media (max-width: 500px) {
-            .game-container {
-                padding: 1.5rem;
-            }
-            .problem {
-                font-size: 2rem;
-                padding: 1rem;
-            }
-            .options {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="game-header">
-            <h1>Math Genius Challenge</h1>
-            <div class="copyright">© 2025 fawwazdzaky | Math Genius</div>
-        </div>
+  <div class="game-container">
+    <h1>Math Genius Challenge</h1>
 
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-label">Score</div>
-                <div class="stat-value" id="score">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Time</div>
-                <div class="stat-value" id="time">60</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">High Score</div>
-                <div class="stat-value" id="high-score">0</div>
-            </div>
-        </div>
-
-        <div class="problem" id="problem">
-            Ready to play?
-        </div>
-
-        <div class="difficulty" id="difficulty">
-            Current difficulty: Basic
-        </div>
-
-        <div class="options" id="options">
-            <!-- Options will be generated here -->
-        </div>
-
-        <div class="controls">
-            <button id="start-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 3l14 9-14 9V3z"></path>
-                </svg>
-                Start Game
-            </button>
-            <button id="reset-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                    <path d="M3 3v5h5"></path>
-                </svg>
-                Reset
-            </button>
-        </div>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Time</div>
+        <div class="stat-value" id="time">60</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">High Score</div>
+        <div class="stat-value" id="high-score">0</div>
+      </div>
     </div>
 
-    <script>
-        // Game Elements
-        const problemElement = document.getElementById('problem');
-        const optionsContainer = document.getElementById('options');
-        const scoreElement = document.getElementById('score');
-        const timeElement = document.getElementById('time');
-        const highScoreElement = document.getElementById('high-score');
-        const startBtn = document.getElementById('start-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const difficultyElement = document.getElementById('difficulty');
+    <div class="problem" id="problem">Ready to play?</div>
 
-        // Game Variables
-        let score = 0;
-        let timeLeft = 60;
-        let highScore = localStorage.getItem('mathHighScore') || 0;
-        let gameInterval;
-        let timer;
-        let currentProblem = {};
-        let gameActive = false;
-        let difficultyLevel = 0;
-        const difficultyNames = ["Basic", "Intermediate", "Advanced", "Expert", "Genius"];
+    <div class="options" id="options"></div>
 
-        // Operations - Expanded with more challenging operations
-        const operations = [
-            { symbol: '+', method: (a, b) => a + b, name: "Addition" },
-            { symbol: '-', method: (a, b) => a - b, name: "Subtraction" },
-            { symbol: '×', method: (a, b) => a * b, name: "Multiplication" },
-            { symbol: '÷', method: (a, b) => a / b, name: "Division" },
-            { symbol: '^', method: (a, b) => Math.pow(a, b), name: "Exponent" },
-            { symbol: '√', method: (a) => Math.sqrt(a), name: "Square Root" },
-            { symbol: '%', method: (a, b) => a % b, name: "Modulo" }
-        ];
+    <div class="controls">
+      <button id="start-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 3l14 9-14 9V3z"></path>
+        </svg>
+        Start Game
+      </button>
+      <button id="reset-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+        </svg>
+        Reset
+      </button>
+    </div>
 
-        // Initialize
+    <p style="margin-top: 2rem; font-size: 0.8rem; opacity: 0.7;">© 2025 fawwazdzaky | Math Genius</p>
+  </div>
+
+  <script>
+    const problemElement = document.getElementById('problem');
+    const optionsContainer = document.getElementById('options');
+    const scoreElement = document.getElementById('score');
+    const timeElement = document.getElementById('time');
+    const highScoreElement = document.getElementById('high-score');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let score = 0;
+    let timeLeft = 60;
+    let highScore = localStorage.getItem('mathHighScore') || 0;
+    let timer;
+    let currentProblem = {};
+    let gameActive = false;
+
+    const operations = [
+      { symbol: '+', method: (a, b) => a + b },
+      { symbol: '-', method: (a, b) => a - b },
+      { symbol: '×', method: (a, b) => a * b },
+      { symbol: '÷', method: (a, b) => a / b }
+    ];
+
+    highScoreElement.textContent = highScore;
+
+    function generateProblem() {
+      const operation = operations[Math.floor(Math.random() * operations.length)];
+      let a, b, answer;
+
+      switch (operation.symbol) {
+        case '+':
+          a = Math.floor(Math.random() * 100) + 20;
+          b = Math.floor(Math.random() * 100) + 20;
+          break;
+        case '-':
+          a = Math.floor(Math.random() * 150) + 50;
+          b = Math.floor(Math.random() * 100) + 20;
+          break;
+        case '×':
+          a = Math.floor(Math.random() * 20) + 10;
+          b = Math.floor(Math.random() * 15) + 5;
+          break;
+        case '÷':
+          b = Math.floor(Math.random() * 15) + 2;
+          a = b * (Math.floor(Math.random() * 20) + 5);
+          break;
+      }
+
+      answer = operation.method(a, b);
+      const roundedAnswer = operation.symbol === '÷' ? parseFloat(answer.toFixed(2)) : answer;
+
+      currentProblem = {
+        a: a,
+        b: b,
+        operation: operation.symbol,
+        answer: roundedAnswer,
+        options: generateOptions(roundedAnswer)
+      };
+
+      problemElement.textContent = `${a} ${operation.symbol} ${b} = ?`;
+      renderOptions();
+    }
+
+    function generateOptions(correctAnswer) {
+      const options = [correctAnswer];
+      const isDecimal = correctAnswer % 1 !== 0;
+
+      while (options.length < 4) {
+        let offset = isDecimal
+          ? (Math.random() * 5).toFixed(2)
+          : Math.floor(Math.random() * 20) + 1;
+
+        offset = Number(offset);
+        const option = Math.random() > 0.5
+          ? correctAnswer + offset
+          : correctAnswer - offset;
+
+        const roundedOption = isDecimal ? parseFloat(option.toFixed(2)) : Math.round(option);
+
+        if (!options.includes(roundedOption)) {
+          options.push(roundedOption);
+        }
+      }
+
+      return shuffleArray(options);
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function renderOptions() {
+      optionsContainer.innerHTML = '';
+      currentProblem.options.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'option';
+        button.textContent = option;
+        button.addEventListener('click', () => checkAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedAnswer) {
+      if (!gameActive) return;
+
+      const options = document.querySelectorAll('.option');
+
+      options.forEach(option => {
+        option.disabled = true;
+
+        if (parseFloat(option.textContent) === currentProblem.answer) {
+          option.classList.add('correct');
+        } else if (option.textContent === selectedAnswer.toString()) {
+          option.classList.add('wrong');
+        }
+      });
+
+      if (selectedAnswer === currentProblem.answer) {
+        score++;
+        scoreElement.textContent = score;
+        timeLeft = Math.min(60, timeLeft + 3);
+        timeElement.textContent = timeLeft;
+      } else {
+        score = Math.max(0, score - 1);
+        scoreElement.textContent = score;
+        timeLeft = Math.max(5, timeLeft - 5);
+        timeElement.textContent = timeLeft;
+      }
+
+      setTimeout(() => {
+        generateProblem();
+      }, 1000);
+    }
+
+    function startGame() {
+      if (gameActive) return;
+
+      gameActive = true;
+      score = 0;
+      timeLeft = 60;
+      scoreElement.textContent = score;
+      timeElement.textContent = timeLeft;
+      startBtn.disabled = true;
+
+      generateProblem();
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timeElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      gameActive = false;
+      startBtn.disabled = false;
+
+      if (score > highScore) {
+        highScore = score;
         highScoreElement.textContent = highScore;
+        localStorage.setItem('mathHighScore', highScore);
+      }
 
-        // Update difficulty display
-        function updateDifficulty() {
-            difficultyElement.textContent = `Current difficulty: ${difficultyNames[difficultyLevel]}`;
-        }
+      problemElement.textContent = `${currentProblem.a} ${currentProblem.operation} ${currentProblem.b} = ${currentProblem.answer}`;
+    }
 
-        // Generate Math Problem with increasing difficulty
-        function generateProblem() {
-            // Increase difficulty based on score
-            difficultyLevel = Math.min(Math.floor(score / 5), difficultyNames.length - 1);
-            updateDifficulty();
+    function resetGame() {
+      clearInterval(timer);
+      gameActive = false;
+      score = 0;
+      timeLeft = 60;
+      scoreElement.textContent = score;
+      timeElement.textContent = timeLeft;
+      startBtn.disabled = false;
+      problemElement.textContent = "Ready to play?";
+      optionsContainer.innerHTML = '';
+    }
 
-            // Select operation based on difficulty
-            let operation;
-            if (difficultyLevel < 2) {
-                // Basic operations for lower levels
-                operation = operations[Math.floor(Math.random() * 4)];
-            } else if (difficultyLevel < 4) {
-                // Include exponents and roots
-                operation = operations[Math.floor(Math.random() * 6)];
-            } else {
-                // All operations for genius level
-                operation = operations[Math.floor(Math.random() * operations.length)];
-            }
-
-            let a, b, answer, problemText;
-
-            // Generate numbers based on difficulty
-            const baseSize = 5 + (difficultyLevel * 3);
-            const maxSize = Math.min(100, 10 + (difficultyLevel * 20));
-
-            // Special handling for different operations
-            switch(operation.symbol) {
-                case '+':
-                    a = Math.floor(Math.random() * maxSize) + baseSize;
-                    b = Math.floor(Math.random() * maxSize) + baseSize;
-                    if (difficultyLevel > 2) {
-                        // Add decimals at higher levels
-                        if (Math.random() > 0.7) {
-                            a += Math.round(Math.random() * 10) / 10;
-                            b += Math.round(Math.random() * 10) / 10;
-                        }
-                    }
-                    break;
-                case '-':
-                    a = Math.floor(Math.random() * maxSize) + baseSize * 2;
-                    b = Math.floor(Math.random() * a) + 1;
-                    if (difficultyLevel > 2 && Math.random() > 0.7) {
-                        a += Math.round(Math.random() * 10) / 10;
-                        b += Math.round(Math.random() * 10) / 10;
-                    }
-                    break;
-                case '×':
-                    a = Math.floor(Math.random() * (baseSize + 5)) + 3;
-                    b = Math.floor(Math.random() * (baseSize + 5)) + 3;
-                    if (difficultyLevel > 1) {
-                        // Larger numbers or decimals
-                        if (Math.random() > 0.5) {
-                            a = Math.floor(Math.random() * 15) + 6;
-                            b = Math.floor(Math.random() * 15) + 6;
-                        }
-                        if (difficultyLevel > 2 && Math.random() > 0.7) {
-                            a += Math.round(Math.random() * 10) / 10;
-                            b += Math.round(Math.random() * 10) / 10;
-                        }
-                    }
-                    break;
-                case '÷':
-                    b = Math.floor(Math.random() * (baseSize + 3)) + 2;
-                    const multiplier = Math.floor(Math.random() * (baseSize + 3)) + 2;
-                    a = b * multiplier;
-                    if (difficultyLevel > 2 && Math.random() > 0.6) {
-                        // Add decimals
-                        b += Math.round(Math.random() * 10) / 10;
-                        a = Math.round((b * multiplier) * 10) / 10;
-                    }
-                    break;
-                case '^':
-                    a = Math.floor(Math.random() * (baseSize / 2 + 3)) + 2;
-                    b = Math.floor(Math.random() * 4) + 2;
-                    if (difficultyLevel > 3) {
-                        b = Math.floor(Math.random() * 5) + 2;
-                    }
-                    break;
-                case '√':
-                    a = Math.floor(Math.random() * (baseSize * 5)) + 1;
-                    a = a * a; // Ensure perfect square
-                    if (difficultyLevel > 2 && Math.random() > 0.5) {
-                        // Non-perfect squares with decimals
-                        a += Math.floor(Math.random() * 20) + 1;
-                    }
-                    b = null;
-                    break;
-                case '%':
-                    a = Math.floor(Math.random() * maxSize * 2) + baseSize * 2;
-                    b = Math.floor(Math.random() * (baseSize + 5)) + 2;
-                    break;
-            }
-
-            // Calculate answer
-            if (operation.symbol === '√') {
-                answer = Math.sqrt(a);
-                if (difficultyLevel > 2 && !Number.isInteger(answer)) {
-                    answer = parseFloat(answer.toFixed(2));
-                }
-                problemText = `√${a} = ?`;
-            } else {
-                answer = operation.method(a, b);
-                // For division and other operations that might produce decimals
-                if (operation.symbol === '÷' || operation.symbol === '%' || 
-                    (operation.symbol === '^' && b < 0) ||
-                    (['+', '-', '×'].includes(operation.symbol) && 
-                    (a % 1 !== 0 || b % 1 !== 0))) {
-                    answer = parseFloat(answer.toFixed(2));
-                }
-                problemText = `${a} ${operation.symbol} ${b} = ?`;
-            }
-
-            currentProblem = {
-                a: a,
-                b: b,
-                operation: operation.symbol,
-                answer: answer,
-                options: generateOptions(answer, operation.symbol)
-            };
-
-            problemElement.textContent = problemText;
-            renderOptions();
-        }
-
-        // Generate Answer Options with smarter distractor generation
-        function generateOptions(correctAnswer, operation) {
-            const options = [correctAnswer];
-            const isDecimal = correctAnswer % 1 !== 0;
-            
-            while (options.length < 4) {
-                let option;
-                const offsetType = Math.random();
-                
-                if (operation === '√') {
-                    // For square roots, generate options around the correct answer
-                    const offset = Math.floor(Math.random() * 3) + 1;
-                    option = Math.random() > 0.5 ? 
-                        correctAnswer + (isDecimal ? offset/2 : offset) : 
-                        correctAnswer - (isDecimal ? offset/2 : offset);
-                } else if (['+', '-'].includes(operation)) {
-                    // For addition/subtraction, vary by 1-10
-                    const offset = Math.floor(Math.random() * 10) + 1;
-                    option = Math.random() > 0.5 ? correctAnswer + offset : correctAnswer - offset;
-                } else if (['×', '÷', '^', '%'].includes(operation)) {
-                    // For multiplication/division, vary by percentage
-                    const percentage = 0.1 + (Math.random() * 0.4); // 10%-50%
-                    option = Math.random() > 0.5 ? 
-                        correctAnswer * (1 + percentage) : 
-                        correctAnswer * (1 - percentage);
-                    option = parseFloat(option.toFixed(isDecimal ? 2 : 0));
-                }
-                
-                // Ensure option is positive for certain operations
-                if (['√', '÷'].includes(operation) && option <= 0) {
-                    option = correctAnswer + Math.abs(option) + 1;
-                }
-                
-                // Ensure option is unique and not equal to correct answer
-                if (option !== correctAnswer && !options.includes(option)) {
-                    // For decimal answers, ensure options have same decimal places
-                    if (isDecimal) {
-                        option = parseFloat(option.toFixed(2));
-                    } else {
-                        option = Math.round(option);
-                    }
-                    options.push(option);
-                }
-            }
-            
-            return shuffleArray(options);
-        }
-
-        // Shuffle Array
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        // Render Options
-        function renderOptions() {
-            optionsContainer.innerHTML = '';
-            currentProblem.options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'option';
-                button.textContent = option;
-                button.addEventListener('click', () => checkAnswer(option));
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        // Check Answer
-        function checkAnswer(selectedAnswer) {
-            if (!gameActive) return;
-            
-            const options = document.querySelectorAll('.option');
-            options.forEach(option => {
-                option.disabled = true;
-                const optionValue = parseFloat(option.textContent);
-                const correctValue = parseFloat(currentProblem.answer);
-                
-                // Handle floating point comparison
-                if (Math.abs(optionValue - correctValue) < 0.001) {
-                    option.classList.add('correct');
-                } else if (Math.abs(parseFloat(option.textContent) - selectedAnswer) < 0.001) {
-                    option.classList.add('wrong');
-                }
-            });
-
-            // Handle floating point comparison for the selected answer
-            const isCorrect = Math.abs(selectedAnswer - currentProblem.answer) < 0.001;
-            
-            if (isCorrect) {
-                score++;
-                scoreElement.textContent = score;
-                // Increase time bonus based on difficulty
-                timeLeft = Math.min(60, timeLeft + (5 - difficultyLevel));
-                timeElement.textContent = timeLeft;
-            } else {
-                score = Math.max(0, score - 1);
-                scoreElement.textContent = score;
-                // Time penalty increases with difficulty
-                timeLeft = Math.max(5, timeLeft - (3 + difficultyLevel));
-                timeElement.textContent = timeLeft;
-            }
-
-            setTimeout(() => {
-                generateProblem();
-            }, 1000);
-        }
-
-        // Start Game
-        function startGame() {
-            if (gameActive) return;
-            gameActive = true;
-            score = 0;
-            timeLeft = 60;
-            difficultyLevel = 0;
-            scoreElement.textContent = score;
-            timeElement.textContent = timeLeft;
-            updateDifficulty();
-            startBtn.disabled = true;
-            generateProblem();
-            
-            timer = setInterval(() => {
-                timeLeft--;
-                timeElement.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        // End Game
-        function endGame() {
-            clearInterval(timer);
-            gameActive = false;
-            startBtn.disabled = false;
-            
-            if (score > highScore) {
-                highScore = score;
-                highScoreElement.textContent = highScore;
-                localStorage.setItem('mathHighScore', highScore);
-            }
-            
-            // Show correct answer
-            if (currentProblem.operation === '√') {
-                problemElement.textContent = `√${currentProblem.a} = ${currentProblem.answer}`;
-            } else {
-                problemElement.textContent = `${currentProblem.a} ${currentProblem.operation} ${currentProblem.b} = ${currentProblem.answer}`;
-            }
-        }
-
-        // Reset Game
-        function resetGame() {
-            clearInterval(timer);
-            gameActive = false;
-            score = 0;
-            timeLeft = 60;
-            difficultyLevel = 0;
-            scoreElement.textContent = score;
-            timeElement.textContent = timeLeft;
-            updateDifficulty();
-            startBtn.disabled = false;
-            problemElement.textContent = "Ready to play?";
-            optionsContainer.innerHTML = '';
-        }
-
-        // Event Listeners
-        startBtn.addEventListener('click', startGame);
-        resetBtn.addEventListener('click', resetGame);
-    </script>
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+  </script>
 </body>
 </html>
