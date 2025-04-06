@@ -251,8 +251,6 @@
         let gameActive = false;
         let difficultyLevel = 0;
         const difficultyNames = ["Basic", "Intermediate", "Advanced", "Expert", "Genius"];
-        let lastProblems = []; // Track last few problems to avoid repetition
-        const MAX_HISTORY = 5; // Remember last 5 problems
 
         // Operations - Expanded with more challenging operations
         const operations = [
@@ -273,165 +271,127 @@
             difficultyElement.textContent = `Current difficulty: ${difficultyNames[difficultyLevel]}`;
         }
 
-        // Check if problem is similar to recent ones
-        function isProblemSimilar(newProblem) {
-            return lastProblems.some(problem => {
-                // Check if operation and numbers are the same (accounting for commutative operations)
-                if (problem.operation === newProblem.operation) {
-                    if (['+', '×'].includes(newProblem.operation)) {
-                        // For commutative operations, check both orders
-                        return (problem.a === newProblem.a && problem.b === newProblem.b) ||
-                               (problem.a === newProblem.b && problem.b === newProblem.a);
-                    } else {
-                        return problem.a === newProblem.a && problem.b === newProblem.b;
-                    }
-                }
-                return false;
-            });
-        }
-
-        // Generate Math Problem with increasing difficulty and no repetition
+        // Generate Math Problem with increasing difficulty
         function generateProblem() {
             // Increase difficulty based on score
             difficultyLevel = Math.min(Math.floor(score / 5), difficultyNames.length - 1);
             updateDifficulty();
 
-            let newProblem;
-            let attempts = 0;
-            const maxAttempts = 20; // Prevent infinite loops
-            
-            do {
-                attempts++;
-                if (attempts > maxAttempts) {
-                    // If we can't find a unique problem after many attempts, clear history
-                    lastProblems = [];
-                }
-                
-                // Select operation based on difficulty
-                let operation;
-                if (difficultyLevel < 2) {
-                    // Basic operations for lower levels
-                    operation = operations[Math.floor(Math.random() * 4)];
-                } else if (difficultyLevel < 4) {
-                    // Include exponents and roots
-                    operation = operations[Math.floor(Math.random() * 6)];
-                } else {
-                    // All operations for genius level
-                    operation = operations[Math.floor(Math.random() * operations.length)];
-                }
+            // Select operation based on difficulty
+            let operation;
+            if (difficultyLevel < 2) {
+                // Basic operations for lower levels
+                operation = operations[Math.floor(Math.random() * 4)];
+            } else if (difficultyLevel < 4) {
+                // Include exponents and roots
+                operation = operations[Math.floor(Math.random() * 6)];
+            } else {
+                // All operations for genius level
+                operation = operations[Math.floor(Math.random() * operations.length)];
+            }
 
-                let a, b, answer, problemText;
+            let a, b, answer, problemText;
 
-                // Generate numbers based on difficulty
-                const baseSize = 5 + (difficultyLevel * 3);
-                const maxSize = Math.min(100, 10 + (difficultyLevel * 20));
+            // Generate numbers based on difficulty
+            const baseSize = 5 + (difficultyLevel * 3);
+            const maxSize = Math.min(100, 10 + (difficultyLevel * 20));
 
-                // Special handling for different operations
-                switch(operation.symbol) {
-                    case '+':
-                        a = Math.floor(Math.random() * maxSize) + baseSize;
-                        b = Math.floor(Math.random() * maxSize) + baseSize;
-                        if (difficultyLevel > 2) {
-                            // Add decimals at higher levels
-                            if (Math.random() > 0.7) {
-                                a += Math.round(Math.random() * 10) / 10;
-                                b += Math.round(Math.random() * 10) / 10;
-                            }
+            // Special handling for different operations
+            switch(operation.symbol) {
+                case '+':
+                    a = Math.floor(Math.random() * maxSize) + baseSize;
+                    b = Math.floor(Math.random() * maxSize) + baseSize;
+                    if (difficultyLevel > 2) {
+                        // Add decimals at higher levels
+                        if (Math.random() > 0.7) {
+                            a += Math.round(Math.random() * 10) / 10;
+                            b += Math.round(Math.random() * 10) / 10;
                         }
-                        break;
-                    case '-':
-                        a = Math.floor(Math.random() * maxSize) + baseSize * 2;
-                        b = Math.floor(Math.random() * a) + 1;
+                    }
+                    break;
+                case '-':
+                    a = Math.floor(Math.random() * maxSize) + baseSize * 2;
+                    b = Math.floor(Math.random() * a) + 1;
+                    if (difficultyLevel > 2 && Math.random() > 0.7) {
+                        a += Math.round(Math.random() * 10) / 10;
+                        b += Math.round(Math.random() * 10) / 10;
+                    }
+                    break;
+                case '×':
+                    a = Math.floor(Math.random() * (baseSize + 5)) + 3;
+                    b = Math.floor(Math.random() * (baseSize + 5)) + 3;
+                    if (difficultyLevel > 1) {
+                        // Larger numbers or decimals
+                        if (Math.random() > 0.5) {
+                            a = Math.floor(Math.random() * 15) + 6;
+                            b = Math.floor(Math.random() * 15) + 6;
+                        }
                         if (difficultyLevel > 2 && Math.random() > 0.7) {
                             a += Math.round(Math.random() * 10) / 10;
                             b += Math.round(Math.random() * 10) / 10;
                         }
-                        break;
-                    case '×':
-                        a = Math.floor(Math.random() * (baseSize + 5)) + 3;
-                        b = Math.floor(Math.random() * (baseSize + 5)) + 3;
-                        if (difficultyLevel > 1) {
-                            // Larger numbers or decimals
-                            if (Math.random() > 0.5) {
-                                a = Math.floor(Math.random() * 15) + 6;
-                                b = Math.floor(Math.random() * 15) + 6;
-                            }
-                            if (difficultyLevel > 2 && Math.random() > 0.7) {
-                                a += Math.round(Math.random() * 10) / 10;
-                                b += Math.round(Math.random() * 10) / 10;
-                            }
-                        }
-                        break;
-                    case '÷':
-                        b = Math.floor(Math.random() * (baseSize + 3)) + 2;
-                        const multiplier = Math.floor(Math.random() * (baseSize + 3)) + 2;
-                        a = b * multiplier;
-                        if (difficultyLevel > 2 && Math.random() > 0.6) {
-                            // Add decimals
-                            b += Math.round(Math.random() * 10) / 10;
-                            a = Math.round((b * multiplier) * 10) / 10;
-                        }
-                        break;
-                    case '^':
-                        a = Math.floor(Math.random() * (baseSize / 2 + 3)) + 2;
-                        b = Math.floor(Math.random() * 4) + 2;
-                        if (difficultyLevel > 3) {
-                            b = Math.floor(Math.random() * 5) + 2;
-                        }
-                        break;
-                    case '√':
-                        a = Math.floor(Math.random() * (baseSize * 5)) + 1;
-                        a = a * a; // Ensure perfect square
-                        if (difficultyLevel > 2 && Math.random() > 0.5) {
-                            // Non-perfect squares with decimals
-                            a += Math.floor(Math.random() * 20) + 1;
-                        }
-                        b = null;
-                        break;
-                    case '%':
-                        a = Math.floor(Math.random() * maxSize * 2) + baseSize * 2;
-                        b = Math.floor(Math.random() * (baseSize + 5)) + 2;
-                        break;
-                }
-
-                // Calculate answer
-                if (operation.symbol === '√') {
-                    answer = Math.sqrt(a);
-                    if (difficultyLevel > 2 && !Number.isInteger(answer)) {
-                        answer = parseFloat(answer.toFixed(2));
                     }
-                    problemText = `√${a} = ?`;
-                } else {
-                    answer = operation.method(a, b);
-                    // For division and other operations that might produce decimals
-                    if (operation.symbol === '÷' || operation.symbol === '%' || 
-                        (operation.symbol === '^' && b < 0) ||
-                        (['+', '-', '×'].includes(operation.symbol) && 
-                        (a % 1 !== 0 || b % 1 !== 0))) {
-                        answer = parseFloat(answer.toFixed(2));
+                    break;
+                case '÷':
+                    b = Math.floor(Math.random() * (baseSize + 3)) + 2;
+                    const multiplier = Math.floor(Math.random() * (baseSize + 3)) + 2;
+                    a = b * multiplier;
+                    if (difficultyLevel > 2 && Math.random() > 0.6) {
+                        // Add decimals
+                        b += Math.round(Math.random() * 10) / 10;
+                        a = Math.round((b * multiplier) * 10) / 10;
                     }
-                    problemText = `${a} ${operation.symbol} ${b} = ?`;
-                }
-
-                newProblem = {
-                    a: a,
-                    b: b,
-                    operation: operation.symbol,
-                    answer: answer,
-                    problemText: problemText,
-                    options: generateOptions(answer, operation.symbol)
-                };
-                
-            } while (isProblemSimilar(newProblem) && attempts <= maxAttempts);
-
-            // Add to history and maintain max history size
-            lastProblems.push(newProblem);
-            if (lastProblems.length > MAX_HISTORY) {
-                lastProblems.shift();
+                    break;
+                case '^':
+                    a = Math.floor(Math.random() * (baseSize / 2 + 3)) + 2;
+                    b = Math.floor(Math.random() * 4) + 2;
+                    if (difficultyLevel > 3) {
+                        b = Math.floor(Math.random() * 5) + 2;
+                    }
+                    break;
+                case '√':
+                    a = Math.floor(Math.random() * (baseSize * 5)) + 1;
+                    a = a * a; // Ensure perfect square
+                    if (difficultyLevel > 2 && Math.random() > 0.5) {
+                        // Non-perfect squares with decimals
+                        a += Math.floor(Math.random() * 20) + 1;
+                    }
+                    b = null;
+                    break;
+                case '%':
+                    a = Math.floor(Math.random() * maxSize * 2) + baseSize * 2;
+                    b = Math.floor(Math.random() * (baseSize + 5)) + 2;
+                    break;
             }
 
-            currentProblem = newProblem;
-            problemElement.textContent = currentProblem.problemText;
+            // Calculate answer
+            if (operation.symbol === '√') {
+                answer = Math.sqrt(a);
+                if (difficultyLevel > 2 && !Number.isInteger(answer)) {
+                    answer = parseFloat(answer.toFixed(2));
+                }
+                problemText = `√${a} = ?`;
+            } else {
+                answer = operation.method(a, b);
+                // For division and other operations that might produce decimals
+                if (operation.symbol === '÷' || operation.symbol === '%' || 
+                    (operation.symbol === '^' && b < 0) ||
+                    (['+', '-', '×'].includes(operation.symbol) && 
+                    (a % 1 !== 0 || b % 1 !== 0))) {
+                    answer = parseFloat(answer.toFixed(2));
+                }
+                problemText = `${a} ${operation.symbol} ${b} = ?`;
+            }
+
+            currentProblem = {
+                a: a,
+                b: b,
+                operation: operation.symbol,
+                answer: answer,
+                options: generateOptions(answer, operation.symbol)
+            };
+
+            problemElement.textContent = problemText;
             renderOptions();
         }
 
@@ -469,7 +429,7 @@
                 }
                 
                 // Ensure option is unique and not equal to correct answer
-                if (option !== correctAnswer && !options.some(opt => Math.abs(opt - option) < 0.001)) {
+                if (option !== correctAnswer && !options.includes(option)) {
                     // For decimal answers, ensure options have same decimal places
                     if (isDecimal) {
                         option = parseFloat(option.toFixed(2));
@@ -551,7 +511,6 @@
             score = 0;
             timeLeft = 60;
             difficultyLevel = 0;
-            lastProblems = []; // Clear problem history
             scoreElement.textContent = score;
             timeElement.textContent = timeLeft;
             updateDifficulty();
@@ -594,7 +553,6 @@
             score = 0;
             timeLeft = 60;
             difficultyLevel = 0;
-            lastProblems = []; // Clear problem history
             scoreElement.textContent = score;
             timeElement.textContent = timeLeft;
             updateDifficulty();
